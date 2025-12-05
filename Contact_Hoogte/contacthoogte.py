@@ -1,7 +1,12 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from Data_Inlezen import load_biomechanics_data_from_github
 
-# URL to the raw Excel file in your GitHub repo
 GITHUB_RAW_URL = "https://raw.githubusercontent.com/Flovdl/Biomechanica/master/Volledige_Data_Set.xlsx"
+
+# rest of your code unchanged
 
 # Load the data once, so it's ready for any further use in this module
 dataframe = load_biomechanics_data_from_github(GITHUB_RAW_URL)
