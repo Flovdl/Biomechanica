@@ -50,3 +50,61 @@ with open(output_file, "w", encoding="utf-8") as f:
 
 print(f"Styled HTML table saved as {output_file}. Open it in a browser.")
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+from statannotations.Annotator import Annotator
+from scipy.stats import ttest_ind  # or use mannwhitneyu if data isn't normal
+
+# Split 'Sheet_Name' into 'Person' and 'Technique'
+split_cols = dataframe['Sheet_Name'].str.split('_', expand=True)
+dataframe['Person'] = split_cols[0]
+dataframe['Technique'] = split_cols[1]
+
+# Create subsets per person
+df_elien = dataframe[dataframe['Person'] == 'Elien']
+df_yenthe = dataframe[dataframe['Person'] == 'Yenthe']
+
+plt.figure(figsize=(12, 5))
+
+# ---------------------- ELIEN ----------------------
+plt.subplot(1, 2, 1)
+ax1 = sns.boxplot(x='Technique', y='Contact height (cm)', data=df_elien)
+plt.title('Contact Heights - Elien')
+plt.xlabel('Technique')
+plt.ylabel('Contact height (cm)')
+
+pairs = [(tech1, tech2) for i, tech1 in enumerate(df_elien['Technique'].unique())
+         for tech2 in df_elien['Technique'].unique()[i+1:]]
+
+annotator = Annotator(ax1, pairs, data=df_elien,
+                      x='Technique', y='Contact height (cm)')
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    verbose=0
+)
+annotator.apply_and_annotate()
+
+# ---------------------- YENTHE ----------------------
+plt.subplot(1, 2, 2)
+ax2 = sns.boxplot(x='Technique', y='Contact height (cm)', data=df_yenthe)
+plt.title('Contact Heights - Yenthe')
+plt.xlabel('Technique')
+plt.ylabel('')
+
+pairs = [(tech1, tech2) for i, tech1 in enumerate(df_yenthe['Technique'].unique())
+         for tech2 in df_yenthe['Technique'].unique()[i+1:]]
+
+annotator = Annotator(ax2, pairs, data=df_yenthe,
+                      x='Technique', y='Contact height (cm)')
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    verbose=0
+)
+annotator.apply_and_annotate()
+
+plt.tight_layout()
+plt.show()
